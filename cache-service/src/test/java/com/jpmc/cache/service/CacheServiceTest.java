@@ -94,9 +94,7 @@ class CacheServiceTest
         entry3.setId(3L);
         entry3.setName("test3");
         entry3.setSalary(3000.0);
-        
-        //when(employeeRepository.save(entry1)).thenReturn(entry1);
-        
+                
         cacheService.add(entry3);
 
         // Ensure that the cache evicted the least used entity (entity1 should be evicted)
@@ -136,8 +134,14 @@ class CacheServiceTest
         // Entity is not in cache, so it should be fetched from the database
         when(employeeRepository.findById(entry1.getId())).thenReturn(Optional.of(entry1));
         
-        // Add entity2 to cache
+        Employee entry3 = new Employee();
+        entry3.setId(3L);
+        entry3.setName("test3");
+        entry3.setSalary(3000.0);
+                
+        // Add entity2 and entity3 to cache
         cacheService.add(entry2);
+        cacheService.add(entry3);
 
         Employee fetchedEntity = cacheService.get(entry1.getId());
 
@@ -145,11 +149,13 @@ class CacheServiceTest
         assertNotNull(fetchedEntity);
         assertEquals(entry1.getId(), fetchedEntity.getId());
         verify(employeeRepository, times(1)).findById(entry1.getId());
+        verify(employeeRepository, times(1)).save(entry2);
     }
     
     @Test
     void testGetEmployeeNotFound() {
-        when(employeeRepository.findById(1L)).thenReturn(Optional.empty()); // Simulate DB miss
+        // Simulate DB miss
+        when(employeeRepository.findById(1L)).thenReturn(Optional.empty()); 
 
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
             cacheService.get(1L);

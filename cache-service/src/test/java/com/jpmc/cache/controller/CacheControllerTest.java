@@ -128,7 +128,8 @@ class CacheControllerTest {
     @Test
     void testGetEntityNotFound() throws Exception {
         // Mock the behavior of the cacheService to throw exception
-        when(cacheService.get(1L)).thenThrow(new EntityNotFoundException(MessageFormat.format(ENTITY_NOT_FOUND, 1)));
+        when(cacheService.get(1L))
+            .thenThrow(new EntityNotFoundException(MessageFormat.format(ENTITY_NOT_FOUND, 1)));
         
         // Simulate a GET request to fetch the entity
         mockMvc.perform(get("/cache/get/{id}", 1L))
@@ -141,7 +142,7 @@ class CacheControllerTest {
     @Test
     void testInternalError() throws Exception {
         
-        // Simulate a GET request to fetch the entity
+        // Simulate a GET request for add api to get exception
         mockMvc.perform(get("/cache/add"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

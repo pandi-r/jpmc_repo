@@ -115,7 +115,9 @@ public class CacheService
             if (employeeOptional.isPresent()) {
                 log.info("Entry present in DB for the id - {}", id);
                 employee = employeeOptional.get();
-                evictToDatabase();   
+                if (cache.size() >= maxCacheSize) {
+                    evictToDatabase();
+                }
                 cache.put(id, employee);
             }
             else {
